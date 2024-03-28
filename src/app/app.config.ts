@@ -14,7 +14,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideAnimations(),
-    provideHttpClient(withFetch(), withInterceptors([cachingInterceptor])),
-    { provide: HTTP_INTERCEPTORS, useClass: cachingInterceptor, multi: true },
+    provideHttpClient(withFetch()),
   ],
 };

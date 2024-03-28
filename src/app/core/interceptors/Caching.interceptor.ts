@@ -1,23 +1,26 @@
 import {
   HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
+  HttpEventType,
+  HttpInterceptorFn,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { inject } from '@angular/core';
+import { CacheService } from '../../shared/services/Cache.service';
+import { of, tap } from 'rxjs';
 
-// export const cachingInterceptor: HttpInterceptorFn = (req, next) => {
-//   return next(req);
-// };
+export const cachingInterceptor: HttpInterceptorFn = (req, next) => {
+  const cachingService = inject(CacheService);
 
-@Injectable()
-class cachingInterceptor implements HttpInterceptor {
-  intercept(
-    req: HttpRequest<any>,
-    handler: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    console.log('Request URL: ' + req.url);
-    return handler.handle(req);
-  }
-}
+  if (req.method !== 'GET') return next(req);
+
+  const cachedResponse = cachingService.get(req.url);
+  if (cachedResponse) return of(cachedResponse);
+
+  return next(req).pipe(
+    tap({
+      next: (event: HttpEvent<any>) => {
+        if (event.type === HttpEventType.Response)
+          cachingService.put(req.url, event.body);
+      },
+    })
+  );
+};

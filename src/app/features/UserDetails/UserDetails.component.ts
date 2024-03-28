@@ -1,14 +1,14 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnDestroy, type OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserDataService } from '../../shared/services/UserData.service';
 import { User } from '../../core/models/User';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './UserDetails.component.html',
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
@@ -19,14 +19,14 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   constructor(
     private userDataService: UserDataService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private location: Location
   ) {}
 
   ngOnInit(): void {
-    this.updateData(1);
+    this.updateData();
   }
 
-  updateData(index: number): void {
+  updateData(): void {
     this.currentSubs.push(
       this.activatedRoute.params.subscribe((params) => {
         this.currentId = Number(params['id']);
@@ -42,7 +42,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/users']);
+    // this.location.back();
   }
 
   ngOnDestroy(): void {

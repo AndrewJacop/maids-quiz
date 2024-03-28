@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, type OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageApiResponse } from '../../core/models/PageApiResponse';
 import { UserDataService } from '../../shared/services/UserData.service';
 import { Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-users',
@@ -14,10 +14,12 @@ import { Router } from '@angular/router';
 })
 export class UsersComponent implements OnInit, OnDestroy {
   users: PageApiResponse = {} as PageApiResponse;
-  currentSub: Subscription = new Subscription();
+  currentSubs: Subscription[] = [] as Subscription[];
+  currentPage: number = 1;
 
   constructor(
     private userDataService: UserDataService,
+    private activatedRoute: ActivatedRoute,
     private router: Router
   ) {}
 
@@ -26,16 +28,23 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   updateData(): void {
-    this.currentSub = this.userDataService.getUsers(1).subscribe((data) => {
-      this.users = data;
-    });
+    this.currentSubs.push(
+      this.activatedRoute.params.subscribe((params) => {
+        this.currentPage = Number(params['id']);
+        this.currentSubs.push(
+          this.userDataService.getUsers(this.currentPage).subscribe((data) => {
+            this.users = data;
+          })
+        );
+      })
+    );
   }
 
   navToDetails(id: number) {
-    this.router.navigate(['/users', id]);
+    this.router.navigate(['/users/details', id]);
   }
 
   ngOnDestroy(): void {
-    this.currentSub.unsubscribe();
+    this.currentSubs.forEach((s) => s.unsubscribe());
   }
 }

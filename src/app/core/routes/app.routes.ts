@@ -5,13 +5,13 @@ import { UserDetailsComponent } from '../../features/UserDetails/UserDetails.com
 import { NotFoundComponent } from '../../shared/components/NotFound/NotFound.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/users', pathMatch: 'full' },
+  { path: '', redirectTo: '/users/page/1', pathMatch: 'full' },
   {
     path: 'users',
     component: MainLayoutComponent,
     children: [
-      { path: '', component: UsersComponent },
-      { path: ':id', component: UserDetailsComponent },
+      { path: 'page/:id', component: UsersComponent },
+      { path: 'details/:id', component: UserDetailsComponent },
     ],
   },
   { path: '**', component: NotFoundComponent },

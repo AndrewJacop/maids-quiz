@@ -8,12 +8,14 @@ export class CacheService {
   private cache: Map<string, any> = new Map();
   constructor() {}
   put(url: string, response: PageApiResponse) {
-    this.cache.set(url, response);
+    console.log('cache not found!');
+    return this.cache.set(url, response);
   }
   get(url: string) {
-    this.cache.get(url);
+    console.log('cache found!');
+    return this.cache.get(url);
   }
   clear(url: string) {
-    this.cache.clear();
+    return this.cache.clear();
   }
 }
