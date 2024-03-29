@@ -18,8 +18,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
 
   constructor(
     private userDataService: UserDataService,
-    private activatedRoute: ActivatedRoute,
-    private location: Location
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -31,18 +30,12 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       this.activatedRoute.params.subscribe((params) => {
         this.currentId = Number(params['id']);
         this.currentSubs.push(
-          this.userDataService
-            .getUserById(this.currentId.toString())
-            .subscribe((data) => {
-              this.user = data.data;
-            })
+          this.userDataService.getUserById(this.currentId).subscribe((data) => {
+            this.user = data.data;
+          })
         );
       })
     );
-  }
-
-  goBack() {
-    // this.location.back();
   }
 
   ngOnDestroy(): void {

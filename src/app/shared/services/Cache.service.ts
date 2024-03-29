@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PageApiResponse } from '../../core/models/PageApiResponse';
+import { UserApiResponse } from '../../core/models/UserApiResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +8,7 @@ import { PageApiResponse } from '../../core/models/PageApiResponse';
 export class CacheService {
   private cache: Map<string, any> = new Map();
   constructor() {}
-  put(url: string, response: PageApiResponse) {
+  put(url: string, response: PageApiResponse | UserApiResponse) {
     console.log('cache not found!');
     return this.cache.set(url, response);
   }

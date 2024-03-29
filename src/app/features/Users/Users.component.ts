@@ -12,39 +12,37 @@ import { ActivatedRoute, Router } from '@angular/router';
   imports: [CommonModule, FormsModule],
   templateUrl: './Users.component.html',
 })
-export class UsersComponent implements OnInit, OnDestroy {
+export class UsersComponent implements OnInit {
   users: PageApiResponse = {} as PageApiResponse;
-  currentSubs: Subscription[] = [] as Subscription[];
+  currentSub: Subscription[] = [] as Subscription[];
   currentPage: number = 1;
+  isLoading: Boolean = true;
 
   constructor(
     private userDataService: UserDataService,
-    private activatedRoute: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.updateData();
+    this.UpdatePageData();
   }
 
-  updateData(): void {
-    this.currentSubs.push(
-      this.activatedRoute.params.subscribe((params) => {
-        this.currentPage = Number(params['id']);
-        this.currentSubs.push(
-          this.userDataService.getUsers(this.currentPage).subscribe((data) => {
-            this.users = data;
-          })
-        );
-      })
-    );
+  UpdatePageData() {
+    this.userDataService.getUsers(this.currentPage).subscribe((data) => {
+      this.users = data;
+      this.isLoading = false;
+    });
   }
 
   navToDetails(id: number) {
     this.router.navigate(['/users/details', id]);
   }
 
-  ngOnDestroy(): void {
-    this.currentSubs.forEach((s) => s.unsubscribe());
+  pageChangeEvent(event: number) {
+    if (event > 0 && event <= this.users.total_pages) {
+      console.log(event);
+      this.currentPage = event;
+      this.UpdatePageData();
+    }
   }
 }

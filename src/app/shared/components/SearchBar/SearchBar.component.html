@@ -18,8 +18,10 @@
       </svg>
     </div>
     <input
-      data-dropdown-toggle="dropdown"
-      type="text"
+      (blur)="hideDD()"
+      (keyup)="searchType()"
+      [(ngModel)]="searchQuery"
+      type="search"
       name="userSearch"
       id="topbar-search"
       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -29,19 +31,19 @@
 </form>
 
 <!-- Dropdown menu -->
+@if (ddVisible) {
 <div
-  id="dropdown"
-  class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-96 dark:bg-gray-700"
+  class="absolute z-10 translate-x-2 translate-y-2 bg-white divide-y divide-gray-100 rounded-lg shadow w-96 dark:bg-gray-700"
 >
   <ul
     class="p-2 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownHoverButton"
   >
-    @for (res of searchResults; track $index) {
-    <li>
-      <a
-        [routerLink]="['/users/details/' + res.id]"
-        class="flex px-4 py-2 m-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+    @if (searchQuery) {
+    <li class="flex justify-center">
+      <button
+        (click)="navToDetails(searchResult.id)"
+        class="flex w-11/12 px-4 py-2 m-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
       >
         <div
           class="flex justify-between w-full rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -49,16 +51,22 @@
           <div class="flex">
             <img
               class="w-6 h-6 rounded-full me-2"
-              [src]="res.avatar"
-              alt="Jese image"
+              [src]="searchResult.avatar"
             />
-            <h6>{{ res.first_name }} {{ res.last_name }}</h6>
+            <h6>{{ searchResult.first_name }} {{ searchResult.last_name }}</h6>
           </div>
 
-          <h5>id: {{ res.id }}</h5>
+          <h5>id: {{ searchResult.id }}</h5>
         </div>
-      </a>
+      </button>
     </li>
+    } @else {
+    <div class="flex items-center justify-center h-10 max-w-sm p-6">
+      <p class="font-normal text-gray-700 dark:text-gray-400">
+        Please, Enter a valid ID!
+      </p>
+    </div>
     }
   </ul>
 </div>
+}
